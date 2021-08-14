@@ -89,7 +89,7 @@ static bool lookup_default(cz::dwim::Dwim* dwim, cz::Str* expanded) {
 
 /// Expand `.` to the name of the current directory.
 static cz::Str expand_relpath(cz::dwim::Dwim* dwim, cz::Str relpath) {
-    if (relpath != ".") {
+    if (relpath != "." && !relpath.contains("/.") && !relpath.contains("\\.")) {
         return relpath;
     }
 
@@ -107,5 +107,8 @@ static cz::Str expand_relpath(cz::dwim::Dwim* dwim, cz::Str relpath) {
     if (name.len == 0)
         return relpath;
 
-    return name;
+    if (relpath == ".")
+        return name;
+
+    return cz::format(dwim->buffer_array.allocator(), relpath.slice_end(relpath.len - 1), name);
 }

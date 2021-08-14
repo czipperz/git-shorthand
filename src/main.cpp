@@ -95,5 +95,13 @@ git clone git@github.com/czipperz/cz\n\
 $ git-shorthand clone c:cz\n\
 git clone git@github.com/czipperz/cz\n\
 \n\
+You can also use . to represent the name of the current directory:\n\
+$ pwd\n\
+/home/czipperz/git-shorthand\n\
+$ git-shorthand clone czipperz/.\n\
+git clone git@github.com/czipperz/git-shorthand\n\
+$ git-shorthand clone c:.\n\
+git clone git@github.com/czipperz/git-shorthand\n\
+\n\
 ");
 }
