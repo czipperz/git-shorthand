@@ -1,41 +1,62 @@
-#include <stdio.h>
+#include "main.hpp"
 #include <cz/str.hpp>
 #include "clone.hpp"
+#include "git.hpp"
 #include "remote.hpp"
 
-static void show_usage(FILE* file, const char* arg0);
+bool dry_run = false;
+static const char* program_name;
 
 int actual_main(int argc, char** argv) {
+    program_name = argv[0];
+
     if (argc <= 1) {
-        show_usage(stdout, argv[0]);
-        return 0;
+        fprintf(stderr, "Error: No command.  See usage.\n\n");
+        show_usage(stderr);
+        return 1;
     }
 
-    cz::Str command = argv[1];
+    cz::dwim::Dwim dwim = {};
+    dwim.init();
+    CZ_DEFER(dwim.drop());
+
+    int argi = 1;
+    for (; argi < argc; ++argi) {
+        cz::Str arg = argv[argi];
+        if (arg == "-n" || arg == "--dry-run" || arg == "--nono") {
+            dry_run = true;
+        } else {
+            break;
+        }
+    }
+
+    cz::Str command = argv[argi];
     if (command == "help" || command == "--help") {
-        show_usage(stdout, argv[0]);
+        show_usage(stdout);
         return 0;
     } else if (command == "remote") {
-        return run_remote(argc, argv);
+        return run_remote(&dwim, argc - argi, argv + argi);
     } else if (command == "clone") {
-        return run_clone(argc, argv);
+        return run_clone(&dwim, argc - argi, argv + argi);
     } else {
-        fprintf(stderr, "Error: Invalid command.  See usage.\n\n");
-        show_usage(stderr, argv[0]);
-        return 1;
+        return git(&dwim, {}, argc - argi, argv + argi);
     }
 
     return 0;
 }
 
-static void show_usage(FILE* file, const char* arg0) {
+void show_usage(FILE* file) {
     fprintf(file,
             "git-shorthand: Shorthand Git commands.\n\
 \n\
 All commands forward extra arguments to Git.\n\
 \n\
 # Usage\n\
-git-shorthand COMMAND ARGUMENTS...\n\
+git-shorthand [OPTIONS] COMMAND ARGUMENTS...\n\
+\n\
+Options:\n\
+--help | help              Show usage.\n\
+-n | --dry-run | --nono    Print what would happen and don't actually perform the action.\n\
 \n\
 ## Clone command\n\
 git-shorthand clone SHORTURL GITARGUMENTS...\n\

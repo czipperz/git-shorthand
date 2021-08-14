@@ -1,3 +1,5 @@
 #pragma once
 
-int run_remote(int argc, char** argv);
+#include <cz/dwim/dwim.hpp>
+
+int run_remote(cz::dwim::Dwim* dwim, int argc, char** argv);
