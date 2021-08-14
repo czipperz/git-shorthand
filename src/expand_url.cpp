@@ -5,10 +5,13 @@
 #include <cz/env.hpp>
 #include <cz/file.hpp>
 #include <cz/format.hpp>
+#include <cz/path.hpp>
 #include <cz/string.hpp>
+#include <cz/working_directory.hpp>
 
 static bool lookup_acronym(cz::dwim::Dwim* dwim, cz::Str acronym, cz::Str* expanded);
 static bool lookup_default(cz::dwim::Dwim* dwim, cz::Str* expanded);
+static cz::Str expand_relpath(cz::dwim::Dwim* dwim, cz::Str relpath);
 
 cz::Str expand_url(cz::dwim::Dwim* dwim, cz::Str shorturl) {
     if (shorturl.contains("://"))
@@ -30,6 +33,8 @@ cz::Str expand_url(cz::dwim::Dwim* dwim, cz::Str shorturl) {
         if (!lookup_default(dwim, &expanded))
             return shorturl;
     }
+
+    relpath = expand_relpath(dwim, relpath);
 
     return cz::format(dwim->buffer_array.allocator(), expanded, relpath);
 }
@@ -80,4 +85,27 @@ static bool lookup_default(cz::dwim::Dwim* dwim, cz::Str* expanded) {
 
     *expanded = contents.slice_end(newline).clone(dwim->buffer_array.allocator());
     return true;
+}
+
+/// Expand `.` to the name of the current directory.
+static cz::Str expand_relpath(cz::dwim::Dwim* dwim, cz::Str relpath) {
+    if (relpath != ".") {
+        return relpath;
+    }
+
+    cz::String path = {};
+    if (cz::get_working_directory(dwim->buffer_array.allocator(), &path).is_err())
+        return relpath;
+
+    while (path.ends_with('/'))
+        path.pop();
+
+    cz::Str name;
+    if (!cz::path::name_component(path, &name))
+        return relpath;
+
+    if (name.len == 0)
+        return relpath;
+
+    return name;
 }
