@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <cz/str.hpp>
+#include "clone.hpp"
+#include "remote.hpp"
 
 static void show_usage(FILE* file, const char* arg0);
-static int run_remote(int argc, char** argv) {return 0;}
-static int run_clone(int argc, char** argv) {return 0;}
 
 int actual_main(int argc, char** argv) {
     if (argc <= 1) {
@@ -29,7 +29,8 @@ int actual_main(int argc, char** argv) {
 }
 
 static void show_usage(FILE* file, const char* arg0) {
-    fprintf(file, "git-shorthand: Shorthand Git commands.\n\
+    fprintf(file,
+            "git-shorthand: Shorthand Git commands.\n\
 \n\
 All commands forward extra arguments to Git.\n\
 \n\
