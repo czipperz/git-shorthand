@@ -14,6 +14,9 @@ int run_remote(cz::dwim::Dwim* dwim, int argc, char** argv) {
         cz::Str arg = argv[argi];
         if (arg == "-n" || arg == "--dry-run" || arg == "--nono") {
             dry_run = true;
+        } else if (arg == "--help") {
+            show_usage(stdout);
+            return 0;
         } else {
             break;
         }

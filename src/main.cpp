@@ -25,13 +25,16 @@ int actual_main(int argc, char** argv) {
         cz::Str arg = argv[argi];
         if (arg == "-n" || arg == "--dry-run" || arg == "--nono") {
             dry_run = true;
+        } else if (arg == "--help") {
+            show_usage(stdout);
+            return 0;
         } else {
             break;
         }
     }
 
     cz::Str command = argv[argi];
-    if (command == "help" || command == "--help") {
+    if (command == "help") {
         show_usage(stdout);
         return 0;
     } else if (command == "remote") {
@@ -52,11 +55,15 @@ void show_usage(FILE* file) {
 All commands forward extra arguments to Git.\n\
 \n\
 # Usage\n\
-git-shorthand [OPTIONS] COMMAND ARGUMENTS...\n\
+git-shorthand [OPTIONS] COMMAND [OPTIONS] ARGUMENTS...\n\
 \n\
 Options:\n\
---help | help              Show usage.\n\
+--help                     Show usage.\n\
 -n | --dry-run | --nono    Print what would happen and don't actually perform the action.\n\
+\n\
+## Help command\n\
+git-shorthand help\n\
+Show usage.\n\
 \n\
 ## Clone command\n\
 git-shorthand clone SHORTURL GITARGUMENTS...\n\
