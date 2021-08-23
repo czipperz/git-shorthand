@@ -9,14 +9,23 @@ static cz::Str get_remote(int argc, char** argv, int* argi);
 static cz::Str get_url(cz::dwim::Dwim* dwim, int argc, char** argv, int* argi);
 
 int run_remote(cz::dwim::Dwim* dwim, int argc, char** argv) {
-    if (argc < 2) {
+    int argi = 1;
+    for (; argi < argc; ++argi) {
+        cz::Str arg = argv[argi];
+        if (arg == "-n" || arg == "--dry-run" || arg == "--nono") {
+            dry_run = true;
+        } else {
+            break;
+        }
+    }
+
+    if (argi >= argc) {
         fprintf(stderr, "Error: No remote subcommand.  See usage.\n\n");
         show_usage(stderr);
         return 1;
     }
 
-    cz::Str subcommand = argv[1];
-    int argi = 2;
+    cz::Str subcommand = argv[argi++];
 
     if (subcommand == "add" || subcommand == "a" || subcommand == "ao") {
         cz::Str remote = get_remote(argc, argv, &argi);
