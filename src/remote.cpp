@@ -36,9 +36,11 @@ int run_remote(cz::dwim::Dwim* dwim, int argc, char** argv) {
         cz::Str remote = get_remote(argc, argv, &argi);
         cz::Str args[] = {"remote", "remove", remote};
         return git(dwim, args, argc - argi, argv + argi);
-    } else if (subcommand == "show" || subcommand == "s" || subcommand == "so") {
-        cz::Str remote = get_remote(argc, argv, &argi);
-        cz::Str args[] = {"remote", "show", remote};
+    } else if (subcommand == "show" || subcommand == "s") {
+        cz::Str args[] = {"remote", "show"};
+        return git(dwim, args, argc - argi, argv + argi);
+    } else if (subcommand == "so") {
+        cz::Str args[] = {"remote", "show", "origin"};
         return git(dwim, args, argc - argi, argv + argi);
     } else {
         return git(dwim, {}, argc, argv);
