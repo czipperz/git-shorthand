@@ -28,5 +28,5 @@ int run_clone(cz::dwim::Dwim* dwim, int argc, char** argv) {
     cz::Str url = expand_url(dwim, argv[argi++]);
 
     cz::Str args[] = {"clone", url};
-    return git(dwim, args, argc - 2, argv + 2);
+    return git(dwim, args, argc - argi, argv + argi);
 }

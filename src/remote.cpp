@@ -46,7 +46,9 @@ int run_remote(cz::dwim::Dwim* dwim, int argc, char** argv) {
         cz::Str args[] = {"remote", "show", "origin"};
         return git(dwim, args, argc - argi, argv + argi);
     } else {
-        return git(dwim, {}, argc, argv);
+        cz::Str args[] = {"remote"};
+        --argi;
+        return git(dwim, args, argc - argi, argv + argi);
     }
 }
 
